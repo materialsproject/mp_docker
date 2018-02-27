@@ -41,7 +41,7 @@ RUN /opt/anaconda2/bin/pip install -e git://github.com/materialsproject/gbml#egg
 RUN /opt/anaconda2/bin/pip install mod_wsgi funcy unidecode dicttoxml
 
 
-RUN python manage.py makemigrations && python manage.py migrate
+RUN /opt/anaconda2/bin/python manage.py makemigrations && /opt/anaconda2/bin/python manage.py migrate
 RUN npm install -g grunt-cli && npm cache clean && npm install && grunt compile
 
 
