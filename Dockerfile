@@ -1,7 +1,7 @@
 FROM ubuntu:16.04
  
 RUN apt-get update -y && \
-        apt-get install -y apt-utils python wget bzip2 apt-utils dialog apache2 apache2-dev git vim gcc nodejs npm 
+        apt-get install -y apt-utils python wget bzip2 apt-utils dialog apache2 apache2-dev git vim gcc nodejs npm sudo
  
 
 
@@ -39,6 +39,13 @@ WORKDIR /var/www/materials_django
 RUN /opt/anaconda2/bin/pip install -r requirements.txt
 RUN /opt/anaconda2/bin/pip install -e git://github.com/materialsproject/gbml#egg=gbml
 RUN /opt/anaconda2/bin/pip install mod_wsgi funcy unidecode dicttoxml
+
+# Setup Matplotlib backend
+RUN mkdir -p /var/www/.config/matplotlib/ && \
+	echo "backend: Agg" > /var/www/.config/matplotlib/matplotlibrc && \
+	chown -R www-data /var/www/.config/matplotlib
+
+
 
 
 RUN /opt/anaconda2/bin/python manage.py makemigrations && /opt/anaconda2/bin/python manage.py migrate
