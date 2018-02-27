@@ -1,0 +1,6 @@
+[submodule "materials_django"]
+	path = materials_django
+	url = git@github.com:materialsproject/materials_django.git
+[submodule "pymatpro"]
+	path = pymatpro
+	url = git@github.com:materialsproject/pymatpro.git
