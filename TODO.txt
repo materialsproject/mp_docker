@@ -1,0 +1,13 @@
+
+- Create git submodules for materials_django and pymatpro
+- dockerfile for materials_django install steps
+- dockerfile for wiki
+
+---
+
+- deploy on matgen6 - DONE
+- server aliases - DONE
+- static dir config - DONE
+- configure apache - DONE
+- configure SSL - DONE via SSL termination on matgen6
+- make sure snl and sub dbs are working - DONE
