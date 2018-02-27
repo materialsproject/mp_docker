@@ -43,6 +43,7 @@ RUN /opt/anaconda2/bin/pip install mod_wsgi funcy unidecode dicttoxml
 # Setup Matplotlib backend
 RUN mkdir -p /var/www/.config/matplotlib/ && \
 	echo "backend: Agg" > /var/www/.config/matplotlib/matplotlibrc && \
+	echo "backend: Agg" > /root/.config/matplotlib/matplotlibrc && \
 	chown -R www-data /var/www/.config/matplotlib
 
 
