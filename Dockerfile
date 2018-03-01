@@ -24,8 +24,9 @@ COPY materials_django /var/www/materials_django
 COPY pymatpro /var/www/pymatpro
 
 # Mods to OS
-RUN chown -R www-data /var/www/materials_django && \
-	mkdir /var/www/static/ && \
+RUN mkdir /var/www/static/ && \
+	chown -R www-data /var/www/materials_django && \
+	chown -R www-data /var/www/static && \
     ln -s /var/log/apache2 /var/log/httpd && \
     ln -s /usr/bin/nodejs /usr/local/bin/node
 
@@ -42,16 +43,20 @@ RUN /opt/anaconda2/bin/pip install mod_wsgi funcy unidecode dicttoxml
 
 # Setup Matplotlib backend
 RUN mkdir -p /var/www/.config/matplotlib/ && \
+	mkdir -p /root/.config/matplotlib/ && \
 	echo "backend: Agg" > /var/www/.config/matplotlib/matplotlibrc && \
 	echo "backend: Agg" > /root/.config/matplotlib/matplotlibrc && \
 	chown -R www-data /var/www/.config/matplotlib
 
 
-
-
-RUN /opt/anaconda2/bin/python manage.py makemigrations && /opt/anaconda2/bin/python manage.py migrate
 RUN npm install -g grunt-cli && npm cache clean && npm install && grunt compile
+USER www-data
+RUN /opt/anaconda2/bin/python manage.py makemigrations && \
+	/opt/anaconda2/bin/python manage.py migrate && \
+	/opt/anaconda2/bin/python manage.py collectstatic --noinput
 
+
+USER root
 
 # Apache
 RUN a2enmod proxy proxy_http deflate rewrite headers
