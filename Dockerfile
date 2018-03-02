@@ -27,6 +27,7 @@ COPY pymatpro /var/www/pymatpro
 RUN mkdir /var/www/static/ && \
 	chown -R www-data /var/www/materials_django && \
 	chown -R www-data /var/www/static && \
+	chown www-data /var/log/apache2 && \
     ln -s /var/log/apache2 /var/log/httpd && \
     ln -s /usr/bin/nodejs /usr/local/bin/node
 
@@ -53,7 +54,9 @@ RUN npm install -g grunt-cli && npm cache clean && npm install && grunt compile
 USER www-data
 RUN /opt/anaconda2/bin/python manage.py makemigrations && \
 	/opt/anaconda2/bin/python manage.py migrate && \
-	/opt/anaconda2/bin/python manage.py collectstatic --noinput
+	/opt/anaconda2/bin/python manage.py init_sandboxes configs/sandboxes.yaml && \
+	/opt/anaconda2/bin/python manage.py load_db_config configs/*_db_*.yaml && \
+	/opt/anaconda2/bin/python manage.py collectstatic --noinput 
 
 
 USER root
