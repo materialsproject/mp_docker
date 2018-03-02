@@ -1,7 +1,11 @@
 
-- Create git submodules for materials_django and pymatpro
-- dockerfile for materials_django install steps
+
+- docker-compose setup
+- how to handle env vars - there seems to be something off between the prod and dev env ... it is using prod right now??
+- config from vault
+- mounting github code dirs locally with -v
 - dockerfile for wiki
+- write createsuperuser script
 
 ---
 
@@ -11,3 +15,7 @@
 - configure apache - DONE
 - configure SSL - DONE via SSL termination on matgen6
 - make sure snl and sub dbs are working - DONE
+- Create git submodules for materials_django and pymatpro - DONE
+- dockerfile for materials_django install steps - DONE
+
+

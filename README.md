@@ -25,6 +25,10 @@ export LD_LIBRARY_PATH=/opt/anaconda2/lib
 # ssh -f -N -L *:57003:mongodb03.nersc.gov:27017 -L *:57001:mongodb01.nersc.gov:27017 -L *:57004:mongodb04.nersc.gov:27017 <username>@matgen.nersc.gov
 
 apachectl start
+
+## Create superuser
+## Follow instructions in MP docs
+
 ```
 
 Autostart:
