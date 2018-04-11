@@ -54,7 +54,6 @@ RUN npm install -g grunt-cli && npm cache clean && npm install && grunt compile
 USER www-data
 RUN /opt/anaconda2/bin/python manage.py makemigrations && \
 	/opt/anaconda2/bin/python manage.py migrate && \
-	/opt/anaconda2/bin/python manage.py init_sandboxes configs/sandboxes.yaml && \
 	/opt/anaconda2/bin/python manage.py load_db_config configs/*_db_*.yaml && \
 	/opt/anaconda2/bin/python manage.py collectstatic --noinput 
 
