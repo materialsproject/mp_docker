@@ -5,12 +5,6 @@ RUN apt-get update -y && \
  
 
 
-# Mongo
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
-RUN echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-3.2.list
-RUN apt-get update && apt-get install -y mongodb-org
-
-
 # Conda
 WORKDIR /root 
 RUN wget -q https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh && \
@@ -71,6 +65,14 @@ COPY apache/wsgi.conf /etc/apache2/sites-available/wsgi.conf
 RUN a2ensite wsgi
 
 
+
+####### Mongo
+#
+# RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
+# RUN echo \
+#   "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" \
+#   | tee /etc/apt/sources.list.d/mongodb-org-3.2.list
+# RUN apt-get update && apt-get install -y mongodb-org
 
 
 ###################  WIKI and MySQL stuff
