@@ -60,6 +60,10 @@ RUN /opt/anaconda2/bin/python manage.py makemigrations && \
 
 USER root
 
+# Seed db with matgendb.sqlite3 file if present
+COPY matgendb.* materials_django/
+RUN chown -R www-data materials_django
+
 # Apache
 RUN a2enmod proxy proxy_http deflate rewrite headers
 
