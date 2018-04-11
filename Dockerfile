@@ -1,14 +1,14 @@
 FROM ubuntu:16.04
- 
-RUN apt-get update -y && \
-        apt-get install -y apt-utils python wget bzip2 apt-utils dialog apache2 apache2-dev git vim gcc nodejs npm sudo
- 
 
+RUN apt-get update -y && \
+  apt-get install -y apt-utils python wget bzip2 dialog apache2 apache2-dev \
+  git vim gcc nodejs npm sudo
 
 # Conda
-WORKDIR /root 
-RUN wget -q https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh && \
-        bash ./Miniconda2-latest-Linux-x86_64.sh -f -b -p /opt/anaconda2
+WORKDIR /root
+RUN wget -q \
+  https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh \
+  && bash ./Miniconda2-latest-Linux-x86_64.sh -f -b -p /opt/anaconda2
 
 RUN /opt/anaconda2/bin/conda update -y conda
 RUN /opt/anaconda2/bin/conda install -y --channel matsci pymatgen pyhull pybtex
@@ -33,7 +33,8 @@ RUN /opt/anaconda2/bin/python setup.py install
 WORKDIR /var/www/materials_django
 #### TODO: Comment out lines in requirements.txt or convert to conda
 RUN /opt/anaconda2/bin/pip install -r requirements.txt
-RUN /opt/anaconda2/bin/pip install -e git://github.com/materialsproject/gbml#egg=gbml
+RUN /opt/anaconda2/bin/pip install -e \
+  git://github.com/materialsproject/gbml#egg=gbml
 RUN /opt/anaconda2/bin/pip install mod_wsgi funcy unidecode dicttoxml
 
 # Setup Matplotlib backend
@@ -49,7 +50,7 @@ USER www-data
 RUN /opt/anaconda2/bin/python manage.py makemigrations && \
 	/opt/anaconda2/bin/python manage.py migrate && \
 	/opt/anaconda2/bin/python manage.py load_db_config configs/*_db_*.yaml && \
-	/opt/anaconda2/bin/python manage.py collectstatic --noinput 
+	/opt/anaconda2/bin/python manage.py collectstatic --noinput
 
 
 USER root
