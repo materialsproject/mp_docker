@@ -64,7 +64,15 @@ RUN a2enmod proxy proxy_http deflate rewrite headers
 COPY apache/wsgi.conf /etc/apache2/sites-available/wsgi.conf
 RUN a2ensite wsgi
 
+ENV LD_LIBRARY_PATH=/opt/anaconda2/lib
+# If dev, build with `--build-arg PRODUCTION=0`
+ARG PRODUCTION=1
+ENV PRODUCTION=$PRODUCTION
+# build with 0 for no SSL check
+ARG SSL_TERMINATION=1
+ENV SSL_TERMINATION=$SSL_TERMINATION
 
+CMD ["apachectl", "-DFOREGROUND"]
 
 ####### Mongo
 #
