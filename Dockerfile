@@ -50,8 +50,8 @@ USER www-data
 RUN /opt/anaconda2/bin/python manage.py makemigrations && \
 	/opt/anaconda2/bin/python manage.py migrate && \
 	/opt/anaconda2/bin/python manage.py load_db_config configs/*_db_*.yaml && \
-	/opt/anaconda2/bin/python manage.py swap_dbconfig configs/apps_db_dev.yaml app prod
-	/opt/anaconda2/bin/python manage.py swap_dbconfig configs/submissions_db_dev.yaml sub prod
+	/opt/anaconda2/bin/python manage.py swap_dbconfig configs/apps_db_dev.yaml app prod && \
+	/opt/anaconda2/bin/python manage.py swap_dbconfig configs/submissions_db_dev.yaml sub prod && \
 	/opt/anaconda2/bin/python manage.py collectstatic --noinput
 
 
