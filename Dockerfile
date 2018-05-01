@@ -46,20 +46,19 @@ RUN mkdir -p /var/www/.config/matplotlib/ && \
 
 
 RUN npm install -g grunt-cli && npm cache clean && npm install && grunt compile
-USER www-data
-RUN /opt/anaconda2/bin/python manage.py makemigrations && \
-	/opt/anaconda2/bin/python manage.py migrate && \
-	/opt/anaconda2/bin/python manage.py load_db_config configs/*_db_*.yaml && \
-	/opt/anaconda2/bin/python manage.py swap_dbconfig configs/apps_db_dev.yaml app prod && \
-	/opt/anaconda2/bin/python manage.py swap_dbconfig configs/submissions_db_dev.yaml sub prod && \
-	/opt/anaconda2/bin/python manage.py collectstatic --noinput
-
-
-USER root
 
 # Seed db with matgendb.sqlite3 file if present
 COPY matgendb.* materials_django/
 RUN chown -R www-data materials_django
+
+USER www-data
+RUN /opt/anaconda2/bin/python manage.py makemigrations && \
+	/opt/anaconda2/bin/python manage.py migrate && \
+	/opt/anaconda2/bin/python manage.py load_db_config configs/*_db_*.yaml && \
+	/opt/anaconda2/bin/python manage.py collectstatic --noinput
+
+
+USER root
 
 # Apache
 RUN a2enmod proxy proxy_http deflate rewrite headers
