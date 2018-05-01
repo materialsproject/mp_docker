@@ -14,14 +14,19 @@ RUN /opt/anaconda2/bin/conda update -y conda
 RUN /opt/anaconda2/bin/conda install -y --channel matsci pymatgen pyhull pybtex
 
 
+## Mimic cori "dwinston" user for apache
+RUN adduser --disabled-password --gecos '' --shell /usr/sbin/nologin --home /var/www --uid 62983 www-matgen
+RUN sed --in-place s/APACHE_RUN_USER=www-data/APACHE_RUN_USER=www-matgen/g /etc/apache2/envvars
+
+
 COPY materials_django /var/www/materials_django
 COPY pymatpro /var/www/pymatpro
 
 # Mods to OS
 RUN mkdir /var/www/static/ && \
-	chown -R www-data /var/www/materials_django && \
-	chown -R www-data /var/www/static && \
-	chown www-data /var/log/apache2 && \
+	chown -R www-matgen /var/www/materials_django && \
+	chown -R www-matgen /var/www/static && \
+	chown www-matgen /var/log/apache2 && \
     ln -s /var/log/apache2 /var/log/httpd && \
     ln -s /usr/bin/nodejs /usr/local/bin/node
 
@@ -42,23 +47,21 @@ RUN mkdir -p /var/www/.config/matplotlib/ && \
 	mkdir -p /root/.config/matplotlib/ && \
 	echo "backend: Agg" > /var/www/.config/matplotlib/matplotlibrc && \
 	echo "backend: Agg" > /root/.config/matplotlib/matplotlibrc && \
-	chown -R www-data /var/www/.config/matplotlib
+	chown -R www-matgen /var/www/.config/matplotlib
 
 
 RUN npm install -g grunt-cli && npm cache clean && npm install && grunt compile
 
-# Seed db with matgendb.sqlite3 file if present
-COPY matgendb.* materials_django/
-RUN chown -R www-data materials_django
-
-USER www-data
+USER www-matgen
 RUN /opt/anaconda2/bin/python manage.py makemigrations && \
 	/opt/anaconda2/bin/python manage.py migrate && \
+	/opt/anaconda2/bin/python manage.py init_sandboxes configs/sandboxes.yaml && \
 	/opt/anaconda2/bin/python manage.py load_db_config configs/*_db_*.yaml && \
 	/opt/anaconda2/bin/python manage.py collectstatic --noinput
 
-
 USER root
+
+RUN chown -R www-matgen materials_django
 
 # Apache
 RUN a2enmod proxy proxy_http deflate rewrite headers
@@ -73,6 +76,9 @@ ENV PRODUCTION=$PRODUCTION
 # build with 0 for no SSL check
 ARG SSL_TERMINATION=1
 ENV SSL_TERMINATION=$SSL_TERMINATION
+
+
+
 
 CMD ["apachectl", "-DFOREGROUND"]
 
