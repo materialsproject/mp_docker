@@ -15,7 +15,8 @@ RUN /opt/anaconda2/bin/conda install -y --channel matsci pymatgen pyhull pybtex
 
 
 ## Mimic cori "dwinston" user for apache
-RUN adduser --disabled-password --gecos '' --shell /usr/sbin/nologin --home /var/www --uid 62983 www-matgen
+ARG UID=62983
+RUN adduser --disabled-password --gecos '' --shell /usr/sbin/nologin --home /var/www --uid $UID www-matgen
 RUN sed --in-place s/APACHE_RUN_USER=www-data/APACHE_RUN_USER=www-matgen/g /etc/apache2/envvars
 
 
