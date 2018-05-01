@@ -1,20 +1,14 @@
 FROM ubuntu:16.04
- 
+
 RUN apt-get update -y && \
-        apt-get install -y apt-utils python wget bzip2 apt-utils dialog apache2 apache2-dev git vim gcc nodejs npm sudo
- 
-
-
-# Mongo
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
-RUN echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-3.2.list
-RUN apt-get update && apt-get install -y mongodb-org
-
+  apt-get install -y apt-utils python wget bzip2 dialog apache2 apache2-dev \
+  git vim gcc nodejs npm sudo
 
 # Conda
-WORKDIR /root 
-RUN wget -q https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh && \
-        bash ./Miniconda2-latest-Linux-x86_64.sh -f -b -p /opt/anaconda2
+WORKDIR /root
+RUN wget -q \
+  https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh \
+  && bash ./Miniconda2-latest-Linux-x86_64.sh -f -b -p /opt/anaconda2
 
 RUN /opt/anaconda2/bin/conda update -y conda
 RUN /opt/anaconda2/bin/conda install -y --channel matsci pymatgen pyhull pybtex
@@ -39,7 +33,8 @@ RUN /opt/anaconda2/bin/python setup.py install
 WORKDIR /var/www/materials_django
 #### TODO: Comment out lines in requirements.txt or convert to conda
 RUN /opt/anaconda2/bin/pip install -r requirements.txt
-RUN /opt/anaconda2/bin/pip install -e git://github.com/materialsproject/gbml#egg=gbml
+RUN /opt/anaconda2/bin/pip install -e \
+  git://github.com/materialsproject/gbml#egg=gbml
 RUN /opt/anaconda2/bin/pip install mod_wsgi funcy unidecode dicttoxml
 
 # Setup Matplotlib backend
@@ -54,12 +49,15 @@ RUN npm install -g grunt-cli && npm cache clean && npm install && grunt compile
 USER www-data
 RUN /opt/anaconda2/bin/python manage.py makemigrations && \
 	/opt/anaconda2/bin/python manage.py migrate && \
-	/opt/anaconda2/bin/python manage.py init_sandboxes configs/sandboxes.yaml && \
 	/opt/anaconda2/bin/python manage.py load_db_config configs/*_db_*.yaml && \
-	/opt/anaconda2/bin/python manage.py collectstatic --noinput 
+	/opt/anaconda2/bin/python manage.py collectstatic --noinput
 
 
 USER root
+
+# Seed db with matgendb.sqlite3 file if present
+COPY matgendb.* materials_django/
+RUN chown -R www-data materials_django
 
 # Apache
 RUN a2enmod proxy proxy_http deflate rewrite headers
@@ -67,7 +65,23 @@ RUN a2enmod proxy proxy_http deflate rewrite headers
 COPY apache/wsgi.conf /etc/apache2/sites-available/wsgi.conf
 RUN a2ensite wsgi
 
+ENV LD_LIBRARY_PATH=/opt/anaconda2/lib
+# If dev, build with `--build-arg PRODUCTION=0`
+ARG PRODUCTION=1
+ENV PRODUCTION=$PRODUCTION
+# build with 0 for no SSL check
+ARG SSL_TERMINATION=1
+ENV SSL_TERMINATION=$SSL_TERMINATION
 
+CMD ["apachectl", "-DFOREGROUND"]
+
+####### Mongo
+#
+# RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
+# RUN echo \
+#   "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" \
+#   | tee /etc/apt/sources.list.d/mongodb-org-3.2.list
+# RUN apt-get update && apt-get install -y mongodb-org
 
 
 ###################  WIKI and MySQL stuff
