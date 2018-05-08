@@ -39,8 +39,7 @@ RUN /opt/anaconda2/bin/python setup.py install
 WORKDIR /var/www/materials_django
 #### TODO: Comment out lines in requirements.txt or convert to conda
 RUN /opt/anaconda2/bin/pip install -r requirements.txt
-RUN /opt/anaconda2/bin/pip install -e \
-  git://github.com/materialsproject/gbml#egg=gbml
+RUN /opt/anaconda2/bin/pip install gbml
 RUN /opt/anaconda2/bin/pip install mod_wsgi funcy unidecode dicttoxml
 
 # Setup Matplotlib backend
