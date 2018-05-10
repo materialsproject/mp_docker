@@ -29,15 +29,14 @@ RUN mkdir /var/www/static/ && \
     ln -s /var/log/apache2 /var/log/httpd && \
     ln -s /usr/bin/nodejs /usr/local/bin/node
 
+WORKDIR /var/www/materials_django
+RUN /opt/anaconda2/bin/pip install numpy
+RUN /opt/anaconda2/bin/pip install -r requirements.txt
+RUN /opt/anaconda2/bin/pip install mod_wsgi
+
 # Pymatpro
 WORKDIR /var/www/pymatpro
 RUN /opt/anaconda2/bin/python setup.py install
-
-
-WORKDIR /var/www/materials_django
-#### TODO: Comment out lines in requirements.txt or convert to conda
-RUN /opt/anaconda2/bin/pip install -r requirements.txt
-RUN /opt/anaconda2/bin/pip install mod_wsgi
 
 # Setup Matplotlib backend
 RUN mkdir -p /var/www/.config/matplotlib/ && \
@@ -46,7 +45,7 @@ RUN mkdir -p /var/www/.config/matplotlib/ && \
 	echo "backend: Agg" > /root/.config/matplotlib/matplotlibrc && \
 	chown -R www-matgen /var/www/.config/matplotlib
 
-
+WORKDIR /var/www/materials_django
 RUN npm install -g grunt-cli && npm cache clean && npm install && grunt compile
 
 USER www-matgen
