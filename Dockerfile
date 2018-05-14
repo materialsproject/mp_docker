@@ -31,13 +31,14 @@ RUN mkdir /var/www/static/ && \
     ln -s /usr/bin/nodejs /usr/local/bin/node
 
 WORKDIR /var/www/materials_django
+RUN /opt/anaconda2/bin/pip install -U pip
 RUN /opt/anaconda2/bin/pip install numpy
 RUN /opt/anaconda2/bin/pip install -r requirements.txt
 RUN /opt/anaconda2/bin/pip install mod_wsgi
 
 # Pymatpro
 WORKDIR /var/www/pymatpro
-RUN /opt/anaconda2/bin/python setup.py install
+RUN /opt/anaconda2/bin/pip install -e .
 
 # Setup Matplotlib backend
 RUN mkdir -p /var/www/.config/matplotlib/ && \
