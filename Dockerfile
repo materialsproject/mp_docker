@@ -11,6 +11,7 @@ RUN wget -q \
   && bash ./Miniconda2-latest-Linux-x86_64.sh -f -b -p /opt/anaconda2
 
 RUN /opt/anaconda2/bin/conda update -y conda
+RUN /opt/anaconda2/bin/conda install -c openbabel openbabel
 
 ## Mimic cori "dwinston" user for apache
 ARG UID=62983
