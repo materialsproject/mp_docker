@@ -7,11 +7,16 @@ RUN apt-get update -y && \
 # Conda
 WORKDIR /root
 RUN wget -q \
-  https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh \
-  && bash ./Miniconda2-latest-Linux-x86_64.sh -f -b -p /opt/anaconda2
+  https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+  bash ./Miniconda3-latest-Linux-x86_64.sh -f -b -p /opt/miniconda3
 
-RUN /opt/anaconda2/bin/conda update -y conda
-RUN /opt/anaconda2/bin/conda install -c openbabel openbabel
+RUN /opt/miniconda3/bin/conda update -y conda
+RUN /opt/miniconda3/bin/conda create -qy -n mpprod3 python=3.6
+RUN /opt/miniconda3/bin/pip install mod_wsgi
+RUN source /opt/miniconda3/bin/activate mpprod3 && conda install -y -c openbabel openbabel
+
+RUN mkdir -p /var/www/python/matgen_prod
+
 
 ## Mimic cori "dwinston" user for apache
 ARG UID=62983
@@ -19,26 +24,25 @@ RUN adduser --disabled-password --gecos '' --shell /usr/sbin/nologin --home /var
 RUN sed --in-place s/APACHE_RUN_USER=www-data/APACHE_RUN_USER=www-matgen/g /etc/apache2/envvars
 
 
-COPY materials_django /var/www/materials_django
-COPY pymatpro /var/www/pymatpro
+COPY materials_django /var/www/python/matgen_prod/materials_django
+COPY pymatpro /var/www/python/matgen_prod/pymatpro
 
 # Mods to OS
 RUN mkdir /var/www/static/ && \
-	chown -R www-matgen /var/www/materials_django && \
+	chown -R www-matgen /var/www/python && \
 	chown -R www-matgen /var/www/static && \
 	chown www-matgen /var/log/apache2 && \
     ln -s /var/log/apache2 /var/log/httpd && \
     ln -s /usr/bin/nodejs /usr/local/bin/node
 
-WORKDIR /var/www/materials_django
-RUN /opt/anaconda2/bin/pip install -U pip
-RUN /opt/anaconda2/bin/pip install numpy
-RUN /opt/anaconda2/bin/pip install -r requirements.txt
-RUN /opt/anaconda2/bin/pip install mod_wsgi
+WORKDIR /var/www/python/matgen_prod/materials_django
+RUN source /opt/miniconda3/bin/activate mpprod3 &&  pip install -U pip && \
+       pip install numpy && \ 
+       pip install -r requirements.txt
 
 # Pymatpro
-WORKDIR /var/www/pymatpro
-RUN /opt/anaconda2/bin/pip install -e .
+WORKDIR /var/www/python/matgen_prod/pymatpro
+RUN source /opt/miniconda3/bin/activate mpprod3 && pip install -e .
 
 # Setup Matplotlib backend
 RUN mkdir -p /var/www/.config/matplotlib/ && \
@@ -47,15 +51,16 @@ RUN mkdir -p /var/www/.config/matplotlib/ && \
 	echo "backend: Agg" > /root/.config/matplotlib/matplotlibrc && \
 	chown -R www-matgen /var/www/.config/matplotlib
 
-WORKDIR /var/www/materials_django
+WORKDIR /var/www/python/matgen_prod/materials_django
 RUN npm install -g grunt-cli && npm cache clean && npm install && grunt compile
 
 USER www-matgen
-RUN /opt/anaconda2/bin/python manage.py makemigrations && \
-	/opt/anaconda2/bin/python manage.py migrate && \
-	/opt/anaconda2/bin/python manage.py init_sandboxes configs/sandboxes.yaml && \
-	/opt/anaconda2/bin/python manage.py load_db_config configs/*_db_*.yaml && \
-	/opt/anaconda2/bin/python manage.py collectstatic --noinput
+RUN source /opt/miniconda3/bin/activate && \
+    python manage.py makemigrations && \
+	python manage.py migrate && \
+	python manage.py init_sandboxes configs/sandboxes.yaml && \
+	python manage.py load_db_config configs/*_db_*.yaml && \
+	python manage.py collectstatic --noinput
 
 USER root
 
@@ -67,7 +72,7 @@ RUN a2enmod proxy proxy_http deflate rewrite headers
 COPY apache/wsgi.conf /etc/apache2/sites-available/wsgi.conf
 RUN a2ensite wsgi
 
-ENV LD_LIBRARY_PATH=/opt/anaconda2/lib
+ENV LD_LIBRARY_PATH=/opt/miniconda3/lib
 # If dev, build with `--build-arg PRODUCTION=0`
 ARG PRODUCTION=1
 ENV PRODUCTION=$PRODUCTION
