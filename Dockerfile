@@ -14,8 +14,10 @@ RUN /opt/miniconda3/bin/conda update -y conda
 RUN /opt/miniconda3/bin/conda create -y -n mpprod3 python=3.6
 RUN /opt/miniconda3/bin/pip install mod_wsgi
 
+# Set the PATH to use conda env
 ENV PATH /opt/miniconda3/envs/mpprod3/bin:$PATH
 
+# for some reason "conda" binary does not get installed not in mpprod3/bin so we need to explicitly activate
 RUN bash -c "source /opt/miniconda3/bin/activate mpprod3 && conda install -y -c openbabel openbabel"
 
 RUN mkdir -p /var/www/python/matgen_prod
@@ -82,7 +84,7 @@ ENV PRODUCTION=$PRODUCTION
 ARG SSL_TERMINATION=1
 ENV SSL_TERMINATION=$SSL_TERMINATION
 
-
+RUN touch /var/log/httpd/django-perf.log && touch /var/log/httpd/django.log && chown -R www-matgen /var/log/httpd/
 
 
 CMD ["apachectl", "-DFOREGROUND"]
