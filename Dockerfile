@@ -11,9 +11,12 @@ RUN wget -q \
   bash ./Miniconda3-latest-Linux-x86_64.sh -f -b -p /opt/miniconda3
 
 RUN /opt/miniconda3/bin/conda update -y conda
-RUN /opt/miniconda3/bin/conda create -qy -n mpprod3 python=3.6
+RUN /opt/miniconda3/bin/conda create -y -n mpprod3 python=3.6
 RUN /opt/miniconda3/bin/pip install mod_wsgi
-RUN . /opt/miniconda3/bin/activate mpprod3 && conda install -y -c openbabel openbabel
+
+ENV PATH /opt/miniconda3/envs/mpprod3/bin:$PATH
+
+RUN bash -c "source /opt/miniconda3/bin/activate mpprod3 && conda install -y -c openbabel openbabel"
 
 RUN mkdir -p /var/www/python/matgen_prod
 
@@ -36,13 +39,13 @@ RUN mkdir /var/www/static/ && \
     ln -s /usr/bin/nodejs /usr/local/bin/node
 
 WORKDIR /var/www/python/matgen_prod/materials_django
-RUN . /opt/miniconda3/bin/activate mpprod3 &&  pip install -U pip && \
+RUN pip install -U pip && \
        pip install numpy && \ 
        pip install -r requirements.txt
 
 # Pymatpro
 WORKDIR /var/www/python/matgen_prod/pymatpro
-RUN . /opt/miniconda3/bin/activate mpprod3 && pip install -e .
+RUN pip install -e .
 
 # Setup Matplotlib backend
 RUN mkdir -p /var/www/.config/matplotlib/ && \
@@ -55,8 +58,7 @@ WORKDIR /var/www/python/matgen_prod/materials_django
 RUN npm install -g grunt-cli && npm cache clean && npm install && grunt compile
 
 USER www-matgen
-RUN . /opt/miniconda3/bin/activate && \
-    python manage.py makemigrations && \
+RUN python manage.py makemigrations && \
 	python manage.py migrate && \
 	python manage.py init_sandboxes configs/sandboxes.yaml && \
 	python manage.py load_db_config configs/*_db_*.yaml && \
