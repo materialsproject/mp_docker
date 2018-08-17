@@ -2,7 +2,7 @@ FROM ubuntu:16.04
 
 RUN apt-get update -y && \
   apt-get install -y apt-utils python wget bzip2 dialog apache2 apache2-dev \
-  git vim gcc nodejs npm sudo
+  git vim gcc nodejs npm sudo cmake libxml2-dev
 
 # Conda
 WORKDIR /root
@@ -17,8 +17,10 @@ RUN /opt/miniconda3/bin/pip install mod_wsgi
 # Set the PATH to use conda env
 ENV PATH /opt/miniconda3/envs/mpprod3/bin:$PATH
 
-# for some reason "conda" binary does not get installed not in mpprod3/bin so we need to explicitly activate
-RUN bash -c "source /opt/miniconda3/bin/activate mpprod3 && conda install -y -c openbabel openbabel"
+RUN git clone https://github.com/openbabel/openbabel.git /root/openbabel
+RUN mkdir openbabel-build
+WORKDIR /root/openbabel-build
+RUN cmake ../openbabel && make -j4 && make install
 
 RUN mkdir -p /var/www/python/matgen_prod
 
