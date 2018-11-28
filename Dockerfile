@@ -2,7 +2,7 @@ FROM ubuntu:16.04
 
 RUN apt-get update -y && \
   apt-get install -y apt-utils python wget bzip2 dialog apache2 apache2-dev \
-  git vim gcc nodejs npm sudo cmake libxml2-dev
+  git vim gcc nodejs npm sudo cmake libxml2-dev libmysqlclient-dev 
 
 # Conda
 WORKDIR /root
