@@ -59,7 +59,7 @@ RUN mkdir -p /var/www/.config/matplotlib/ && \
 	chown -R www-matgen /var/www/.config/matplotlib
 
 WORKDIR /var/www/python/matgen_prod/materials_django
-RUN npm install -g grunt-cli && npm cache clean && npm install && grunt compile
+RUN npm install -g grunt-cli && npm install && grunt compile
 
 USER www-matgen
 RUN python manage.py makemigrations && \
