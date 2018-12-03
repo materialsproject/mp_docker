@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    command: apachectl -DFOREGROUND
+    environment:
+      - SSL_TERMINATION=1
+      - LD_LIBRARY_PATH=/opt/anaconda2/lib
+    ports:
+      - "8000:80"
