@@ -62,11 +62,11 @@ WORKDIR /var/www/python/matgen_prod/materials_django
 RUN npm install -g grunt-cli && npm install && grunt compile
 
 USER www-matgen
-RUN python manage.py makemigrations && \
-	python manage.py migrate && \
-	python manage.py init_sandboxes configs/sandboxes.yaml && \
-	python manage.py load_db_config configs/*_db_*.yaml && \
-	python manage.py collectstatic --noinput
+# RUN python manage.py makemigrations && \
+#	python manage.py migrate && \
+#	python manage.py init_sandboxes configs/sandboxes.yaml && \
+#	python manage.py load_db_config configs/*_db_*.yaml && \
+RUN python manage.py collectstatic --noinput
 
 USER root
 
