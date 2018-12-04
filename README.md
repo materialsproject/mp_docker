@@ -42,5 +42,5 @@ docker run -d -8000:80 -e SSL_TERMINATION=1 -e LD_LIBRARY_PATH=/opt/miniconda3/l
 
 ### Docker Compose
 ```
-docker-compose run
+docker-compose up
 ```
