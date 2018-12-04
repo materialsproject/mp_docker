@@ -18,7 +18,7 @@ There are 3 ways to run the container
 
 ### Start by hand
 ```
-docker run -it -8000:80 mp_docker /bin/bash
+docker run -it -p 8000:80 mp_docker /bin/bash
 
 ## If prod turn uncomment PRODUCTION flag
 # export PRODUCTION=1
