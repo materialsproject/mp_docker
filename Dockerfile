@@ -73,7 +73,12 @@ USER root
 RUN chown -R www-matgen materials_django
 
 # Apache
+
+
 RUN a2enmod proxy proxy_http deflate rewrite headers
+
+RUN sed --in-place 's/Listen\ 80$/Listen\ 8080/g' /etc/apache2/ports.conf
+RUN sed --in-place 's/<VirtualHost\ \*:80>/<VirtualHost\ \*:8080>/g' /etc/apache2/sites-available/000-default.conf
 
 COPY apache/wsgi.conf /etc/apache2/sites-available/wsgi.conf
 RUN a2ensite wsgi
@@ -86,7 +91,7 @@ ENV PRODUCTION=$PRODUCTION
 ARG SSL_TERMINATION=1
 ENV SSL_TERMINATION=$SSL_TERMINATION
 
-RUN touch /var/log/httpd/django-perf.log && touch /var/log/httpd/django.log && chown -R www-matgen /var/log/httpd/
+RUN touch /var/log/apache2/django-perf.log && touch /var/log/apache2/django.log && chown -R www-matgen.www-matgen /var/log/apache2 /var/cache/apache2 /var/lock/apache2 /var/run/apache2
 
 
 CMD ["apachectl", "-DFOREGROUND"]
