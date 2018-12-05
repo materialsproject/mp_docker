@@ -8,7 +8,7 @@ services:
       - SSL_TERMINATION=1
       - LD_LIBRARY_PATH=/opt/miniconda3/lib
     ports:
-      - "8080:8080"
+      - "8000:8080"
     user: 62983:62983
     cap_drop:
       - ALL
