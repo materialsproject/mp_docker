@@ -80,7 +80,9 @@ RUN a2enmod proxy proxy_http deflate rewrite headers
 RUN sed --in-place 's/Listen\ 80$/Listen\ 8080/g' /etc/apache2/ports.conf
 RUN sed --in-place 's/<VirtualHost\ \*:80>/<VirtualHost\ \*:8080>/g' /etc/apache2/sites-available/000-default.conf
 
-COPY apache/wsgi.conf /etc/apache2/sites-available/wsgi.conf
+RUN mkdir -p /run/secrets/
+COPY apache/wsgi.conf /run/secrets/wsgi-conf
+RUN ln -s /run/secrets/wsgi-conf /etc/apache2/sites-available/wsgi.conf
 RUN a2ensite wsgi
 
 ENV LD_LIBRARY_PATH=/opt/miniconda3/lib
