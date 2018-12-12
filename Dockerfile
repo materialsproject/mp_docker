@@ -81,9 +81,18 @@ RUN sed --in-place 's/Listen\ 80$/Listen\ 8080/g' /etc/apache2/ports.conf
 RUN sed --in-place 's/<VirtualHost\ \*:80>/<VirtualHost\ \*:8080>/g' /etc/apache2/sites-available/000-default.conf
 
 RUN mkdir -p /run/secrets/
+
 COPY apache/wsgi.conf /run/secrets/wsgi-conf
 RUN ln -s /run/secrets/wsgi-conf /etc/apache2/sites-available/wsgi.conf
 RUN a2ensite wsgi
+
+COPY materials_django/materials_django/wsgi.py /run/secrets/wsgi-py
+COPY materials_django/materials_django/settings.py /run/secrets/settings-py
+RUN rm materials_django/wsgi.py && \
+    ln -s /run/secrets/wsgi-py materials_django/wsgi.py && \
+    rm materials_django/settings.py && \
+    ln -s /run/secrets/settings-py materials_django/settings.py && \
+    chown -R www-matgen materials_django
 
 ENV LD_LIBRARY_PATH=/opt/miniconda3/lib
 # If dev, build with `--build-arg PRODUCTION=0`
