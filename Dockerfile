@@ -107,6 +107,8 @@ ENV SSL_TERMINATION=$SSL_TERMINATION
 
 RUN touch /var/log/apache2/django-perf.log && touch /var/log/apache2/django.log && chown -R www-matgen.www-matgen /var/log/apache2 /var/cache/apache2 /var/lock/apache2 /var/run/apache2
 
+COPY apache/mod_cloudflare-xenial-amd64.latest.deb /root/mod_cloudflare.deb
+RUN dpkg -i /root/mod_cloudflare.deb && service apache2 restart
 
 CMD ["apachectl", "-DFOREGROUND"]
 
