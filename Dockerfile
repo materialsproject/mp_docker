@@ -105,11 +105,11 @@ ENV PRODUCTION=$PRODUCTION
 ARG SSL_TERMINATION=1
 ENV SSL_TERMINATION=$SSL_TERMINATION
 
+COPY apache/mod_cloudflare-xenial-amd64.latest.deb /root/mod_cloudflare.deb
+RUN dpkg -i /root/mod_cloudflare.deb
+
 RUN touch /var/log/apache2/django-perf.log && touch /var/log/apache2/django.log && chown -R www-matgen.www-matgen /var/log/apache2 /var/cache/apache2 /var/lock/apache2 /var/run/apache2
 RUN echo "export HOSTNAME" >> /etc/apache2/envvars
-
-COPY apache/mod_cloudflare-xenial-amd64.latest.deb /root/mod_cloudflare.deb
-RUN dpkg -i /root/mod_cloudflare.deb && service apache2 restart
 
 CMD ["apachectl", "-DFOREGROUND"]
 
