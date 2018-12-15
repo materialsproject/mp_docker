@@ -111,7 +111,9 @@ RUN dpkg -i /root/mod_cloudflare.deb
 RUN touch /var/log/apache2/django-perf.log && touch /var/log/apache2/django.log && chown -R www-matgen.www-matgen /var/log/apache2 /var/cache/apache2 /var/lock/apache2 /var/run/apache2
 RUN echo "export HOSTNAME" >> /etc/apache2/envvars
 
-CMD ["apachectl", "-DFOREGROUND"]
+COPY apache/apache2-foreground /usr/local/bin/
+CMD ["apache2-foreground"]
+# CMD ["apachectl", "-DFOREGROUND"]
 
 ####### Mongo
 #

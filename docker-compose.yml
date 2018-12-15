@@ -3,7 +3,7 @@ version: '2'
 services:
   web:
     build: .
-    command: apachectl -DFOREGROUND
+    command: apache2-foreground
     environment:
       - SSL_TERMINATION=1
       - LD_LIBRARY_PATH=/opt/miniconda3/lib
