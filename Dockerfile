@@ -79,6 +79,7 @@ RUN a2enmod proxy proxy_http deflate rewrite headers
 
 RUN sed --in-place 's/Listen\ 80$/Listen\ 8080/g' /etc/apache2/ports.conf
 RUN sed --in-place 's/<VirtualHost\ \*:80>/<VirtualHost\ \*:8080>/g' /etc/apache2/sites-available/000-default.conf
+RUN sed --in-place 's/#ServerName www.example.com/ServerName materialsproject.org\n\tServerAlias www.materialsproject.org/g' /etc/apache2/sites-available/000-default.conf
 RUN sed --in-place 's/ErrorLog/#ErrorLog/g' /etc/apache2/sites-available/000-default.conf
 RUN sed --in-place 's/CustomLog/#CustomLog/g' /etc/apache2/sites-available/000-default.conf
 
