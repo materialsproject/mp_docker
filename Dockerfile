@@ -31,7 +31,7 @@ RUN adduser --disabled-password --gecos '' --shell /usr/sbin/nologin --home /var
 RUN sed --in-place s/APACHE_RUN_USER=www-data/APACHE_RUN_USER=www-matgen/g /etc/apache2/envvars
 
 
-COPY materials_django /var/www/python/matgen_prod/materials_django
+COPY materials_django/requirements.txt /var/www/python/matgen_prod/materials_django/requirements.txt
 COPY pymatpro /var/www/python/matgen_prod/pymatpro
 
 # Mods to OS
@@ -59,7 +59,11 @@ RUN mkdir -p /var/www/.config/matplotlib/ && \
 	chown -R www-matgen /var/www/.config/matplotlib
 
 WORKDIR /var/www/python/matgen_prod/materials_django
-RUN npm install -g grunt-cli && npm install && grunt compile
+COPY materials_django/package.json /var/www/python/matgen_prod/materials_django/package.json
+RUN npm install -g grunt-cli && npm install
+
+COPY materials_django /var/www/python/matgen_prod/materials_django
+RUN chown -R www-matgen /var/www/python && grunt compile
 
 USER www-matgen
 # RUN python manage.py makemigrations && \
