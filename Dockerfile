@@ -30,6 +30,9 @@ ARG UID=62983
 RUN adduser --disabled-password --gecos '' --shell /usr/sbin/nologin --home /var/www --uid $UID www-matgen
 RUN sed --in-place s/APACHE_RUN_USER=www-data/APACHE_RUN_USER=www-matgen/g /etc/apache2/envvars
 
+WORKDIR /var/www/python/matgen_prod/materials_django
+COPY materials_django/package.json /var/www/python/matgen_prod/materials_django/package.json
+RUN npm install -g grunt-cli && npm install
 
 COPY materials_django/requirements.txt /var/www/python/matgen_prod/materials_django/requirements.txt
 COPY pymatpro /var/www/python/matgen_prod/pymatpro
@@ -59,9 +62,6 @@ RUN mkdir -p /var/www/.config/matplotlib/ && \
 	chown -R www-matgen /var/www/.config/matplotlib
 
 WORKDIR /var/www/python/matgen_prod/materials_django
-COPY materials_django/package.json /var/www/python/matgen_prod/materials_django/package.json
-RUN npm install -g grunt-cli && npm install
-
 COPY materials_django /var/www/python/matgen_prod/materials_django
 RUN chown -R www-matgen /var/www/python && grunt compile
 
