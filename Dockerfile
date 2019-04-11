@@ -11,7 +11,7 @@ RUN wget -q \
   bash ./Miniconda3-4.5.4-Linux-x86_64.sh -f -b -p /opt/miniconda3
 
 RUN /opt/miniconda3/bin/conda update -y conda
-RUN /opt/miniconda3/bin/conda create -y -n mpprod3 python=3.6
+RUN /opt/miniconda3/bin/conda create -y -n mpprod3 python=3.7
 RUN /opt/miniconda3/bin/pip install mod_wsgi
 
 # Set the PATH to use conda env
