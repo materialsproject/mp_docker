@@ -19,6 +19,8 @@ ENV PATH /opt/miniconda3/envs/mpprod3/bin:$PATH
 
 RUN git clone https://github.com/openbabel/openbabel.git /root/openbabel
 RUN mkdir openbabel-build
+WORKDIR /root/openbabel
+RUN git checkout c9c500388dac1469364f778f4f4aa3a6ff7cc7c5 # Last commit before 2018-08-16
 WORKDIR /root/openbabel-build
 RUN cmake ../openbabel && make -j4 && make install
 
