@@ -7,8 +7,8 @@ RUN apt-get update -y && \
 # Conda
 WORKDIR /root
 RUN wget -q \
-  https://repo.continuum.io/miniconda/Miniconda3-4.5.4-Linux-x86_64.sh && \
-  bash ./Miniconda3-4.5.4-Linux-x86_64.sh -f -b -p /opt/miniconda3
+  https://repo.continuum.io/miniconda/Miniconda3-4.5.12-Linux-x86_64.sh && \
+  bash ./Miniconda3-4.5.12-Linux-x86_64.sh -f -b -p /opt/miniconda3
 
 RUN /opt/miniconda3/bin/conda update -y conda
 RUN /opt/miniconda3/bin/conda create -y -n mpprod3 python=3.7
