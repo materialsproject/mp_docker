@@ -6,4 +6,4 @@ RUN chown root:filebeat /usr/share/filebeat/filebeat.yml
 
 USER filebeat
 RUN filebeat modules enable apache
-CMD ["filebeat -e"]
+
