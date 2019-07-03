@@ -81,7 +81,7 @@ RUN chown -R www-matgen materials_django
 # Apache
 
 
-RUN a2enmod proxy proxy_http deflate rewrite headers
+RUN a2enmod proxy proxy_http deflate rewrite headers remoteip
 
 RUN sed --in-place 's/Listen\ 80$/Listen\ 8080/g' /etc/apache2/ports.conf
 RUN sed --in-place 's/<VirtualHost\ \*:80>/<VirtualHost\ \*:8080>/g' /etc/apache2/sites-available/000-default.conf
@@ -113,9 +113,6 @@ ENV PRODUCTION=$PRODUCTION
 # build with 0 for no SSL check
 ARG SSL_TERMINATION=1
 ENV SSL_TERMINATION=$SSL_TERMINATION
-
-COPY apache/mod_cloudflare-xenial-amd64.latest.deb /root/mod_cloudflare.deb
-RUN dpkg -i /root/mod_cloudflare.deb
 
 RUN touch /var/log/apache2/django-perf.log && touch /var/log/apache2/django.log && chown -R www-matgen.www-matgen /var/log/apache2 /var/cache/apache2 /var/lock/apache2 /var/run/apache2
 RUN echo "export HOSTNAME" >> /etc/apache2/envvars
