@@ -27,7 +27,7 @@ RUN cmake ../openbabel && make -j4 && make install
 RUN mkdir -p /var/www/python/matgen_prod
 
 
-## Mimic cori "dwinston" user for apache
+## Mimic cori "mkhorton" user for apache
 ARG UID=72748
 RUN adduser --disabled-password --gecos '' --shell /usr/sbin/nologin --home /var/www --uid $UID www-matgen
 RUN sed --in-place s/APACHE_RUN_USER=www-data/APACHE_RUN_USER=www-matgen/g /etc/apache2/envvars
