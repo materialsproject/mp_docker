@@ -2,11 +2,20 @@ version: '2'
 
 services:
   web:
-    build: .
+    build:
+      context: .
+      args:
+        PRODUCTION: 1
+        SSL_TERMINATION: 1
+        MP_USERDB_USER: "${MP_USERDB_USER}"
+        MP_USERDB_PASS: "${MP_USERDB_PASS}"
     command: apache2-foreground
     environment:
-      - SSL_TERMINATION=1
-      - LD_LIBRARY_PATH=/opt/miniconda3/lib
+      SSL_TERMINATION: 1
+      PRODUCTION: 1
+      LD_LIBRARY_PATH: opt/miniconda3/lib
+      MP_USERDB_USER: "${MP_USERDB_USER}"
+      MP_USERDB_PASS: "${MP_USERDB_PASS}"
     ports:
       - "8080:8080"
     user: 62983:62983

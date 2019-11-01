@@ -67,11 +67,28 @@ WORKDIR /var/www/python/matgen_prod/materials_django
 COPY materials_django /var/www/python/matgen_prod/materials_django
 RUN chown -R www-matgen /var/www/python && grunt compile
 
+# If dev, build with `--build-arg PRODUCTION=0`
+ARG PRODUCTION=1
+ENV PRODUCTION=$PRODUCTION
+# build with 0 for no SSL check
+ARG SSL_TERMINATION=1
+ENV SSL_TERMINATION=$SSL_TERMINATION
+RUN echo $SSL_TERMINATION $PRODUCTION
+
+ARG MP_USERDB_USER
+ENV MP_USERDB_USER=$MP_USERDB_USER
+ARG MP_USERDB_PASS
+ENV MP_USERDB_PASS=$MP_USERDB_PASS
+RUN echo $MP_USERDB_USER $MP_USERDB_PASS
+
 USER www-matgen
-# RUN python manage.py makemigrations && \
-#	python manage.py migrate && \
-#	python manage.py init_sandboxes configs/sandboxes.yaml && \
-#	python manage.py load_db_config configs/*_db_*.yaml && \
+RUN if [ $PRODUCTION -eq 0 ]; then python manage.py makemigrations && \
+    python manage.py migrate && \
+    python manage.py init_sandboxes configs/sandboxes.yaml && \
+    python manage.py load_db_config configs/*_db_*.yaml && \
+    python manage.py shell < dev_scripts/add_test_models.py && \
+    sh dev_scripts/load_prod_as_dev.sh; fi
+
 RUN python manage.py collectstatic --noinput
 
 USER root
@@ -107,12 +124,6 @@ RUN rm materials_django/wsgi.py && \
     chown -R www-matgen /var/www/python
 
 ENV LD_LIBRARY_PATH=/opt/miniconda3/lib
-# If dev, build with `--build-arg PRODUCTION=0`
-ARG PRODUCTION=1
-ENV PRODUCTION=$PRODUCTION
-# build with 0 for no SSL check
-ARG SSL_TERMINATION=1
-ENV SSL_TERMINATION=$SSL_TERMINATION
 
 RUN touch /var/log/apache2/django-perf.log && touch /var/log/apache2/django.log && chown -R www-matgen.www-matgen /var/log/apache2 /var/cache/apache2 /var/lock/apache2 /var/run/apache2
 RUN echo "export HOSTNAME" >> /etc/apache2/envvars
