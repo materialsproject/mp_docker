@@ -4,3 +4,6 @@
 [submodule "pymatpro"]
 	path = pymatpro
 	url = git@github.com:materialsproject/pymatpro.git
+[submodule "crystaltoolkit"]
+	path = crystaltoolkit
+	url = git@github.com:materialsproject/crystaltoolkit.git
