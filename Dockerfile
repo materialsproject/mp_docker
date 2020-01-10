@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 RUN apt-get update -y && \
   apt-get install -y apt-utils python wget bzip2 dialog apache2 apache2-dev \
@@ -12,12 +12,11 @@ RUN sed --in-place s/APACHE_RUN_USER=www-data/APACHE_RUN_USER=www-matgen/g /etc/
 
 # Conda
 WORKDIR /root
-RUN wget -q \
-  https://repo.continuum.io/miniconda/Miniconda3-4.5.4-Linux-x86_64.sh && \
-  bash ./Miniconda3-4.5.4-Linux-x86_64.sh -f -b -p /opt/miniconda3
+RUN wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+  bash ./Miniconda3-latest-Linux-x86_64.sh -f -b -p /opt/miniconda3
 
 RUN /opt/miniconda3/bin/conda update -y conda && \
-    /opt/miniconda3/bin/conda create -y -n mpprod3 python=3.6 && \
+    /opt/miniconda3/bin/conda create -y -n mpprod3 python=3.7 && \
     /opt/miniconda3/bin/pip install --no-cache mod_wsgi && \
     /opt/miniconda3/bin/conda clean -afy
 
@@ -33,7 +32,7 @@ RUN cmake ../openbabel && make -j4 && make install
 # npm
 WORKDIR /var/www/python/matgen_prod/materials_django
 COPY materials_django/package.json package.json
-RUN npm install -g npm@latest grunt-cli && npm install
+RUN npm install --unsafe-perm -g npm@latest grunt-cli && npm install --unsafe-perm && npm cache clean -f
 
 # requirements
 COPY materials_django/requirements.txt requirements.txt
