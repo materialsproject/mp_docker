@@ -2,22 +2,16 @@ version: '2'
 
 services:
   web:
-    build:
-      context: .
-      args:
-        PRODUCTION: 0
-        SSL_TERMINATION: 0
-        MP_USERDB_USER: "${MP_USERDB_USER}"
-        MP_USERDB_PASS: "${MP_USERDB_PASS}"
-    command: apache2-foreground
-    environment:
-      SSL_TERMINATION: 0
-      PRODUCTION: 0
-      LD_LIBRARY_PATH: opt/miniconda3/lib
-      MP_USERDB_USER: "${MP_USERDB_USER}"
-      MP_USERDB_PASS: "${MP_USERDB_PASS}"
+    build: .
     ports:
-      - "8080:8080"
-    user: 62983:62983
-    cap_drop:
-      - ALL
+      - "8765:8080"
+
+  crystaltoolkit:
+      build:
+          context: crystaltoolkit
+      depends_on:
+          - kv
+          - web
+
+  kv:
+    image: redis:5.0.3
