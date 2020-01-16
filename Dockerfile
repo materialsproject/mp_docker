@@ -41,13 +41,13 @@ RUN npm install --unsafe-perm -g npm@latest grunt-cli npm install --unsafe-perm 
 
 COPY materials_django/* /app/
 #RUN grunt compile && \
-RUN python manage.py makemigrations && \
-    python manage.py migrate && \
-    python manage.py init_sandboxes configs/sandboxes.yaml && \
-    python manage.py load_db_config configs/*_db_*.yaml && \
-    #python manage.py shell < dev_scripts/add_test_models.py
-    # && sh dev_scripts/load_prod_as_dev.sh && \
-    #python manage.py collectstatic --noinput && echo "DONE"
+#RUN python manage.py makemigrations && \
+#    python manage.py migrate && \
+#    python manage.py init_sandboxes configs/sandboxes.yaml && \
+#    python manage.py load_db_config configs/*_db_*.yaml
+#    #python manage.py shell < dev_scripts/add_test_models.py
+#    # && sh dev_scripts/load_prod_as_dev.sh && \
+#    #python manage.py collectstatic --noinput && echo "DONE"
 
 COPY docker-entrypoint.sh .
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
