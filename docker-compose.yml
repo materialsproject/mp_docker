@@ -18,6 +18,6 @@ services:
       MP_USERDB_PASS: "${MP_USERDB_PASS}"
     ports:
       - "8080:8080"
-    user: 62983:62983
+    user: 72748:72748
     cap_drop:
       - ALL
