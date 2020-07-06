@@ -116,11 +116,8 @@ COPY newrelic.ini /run/secrets/newrelic-ini
 RUN ln -s /run/secrets/newrelic-ini /var/www/python/matgen_prod/newrelic.ini
 
 COPY materials_django/materials_django/wsgi.py /run/secrets/wsgi-py
-COPY materials_django/materials_django/settings.py /run/secrets/settings-py
 RUN rm materials_django/wsgi.py && \
     ln -s /run/secrets/wsgi-py materials_django/wsgi.py && \
-    rm materials_django/settings.py && \
-    ln -s /run/secrets/settings-py materials_django/settings.py && \
     chown -R www-matgen /var/www/python
 
 ENV LD_LIBRARY_PATH=/opt/miniconda3/lib
