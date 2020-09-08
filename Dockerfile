@@ -54,6 +54,7 @@ RUN pip install -U pip && \
 
 # Pymatpro
 WORKDIR /var/www/python/matgen_prod/pymatpro
+RUN pip install --upgrade --ignore-installed certifi
 RUN pip install -e .
 
 # Setup Matplotlib backend
