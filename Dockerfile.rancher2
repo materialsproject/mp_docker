@@ -109,17 +109,12 @@ RUN sed --in-place 's/CustomLog/#CustomLog/g' /etc/apache2/sites-available/000-d
 
 RUN mkdir -p /secrets/
 
-COPY apache/wsgi.conf /secrets/wsgi-conf
-RUN ln -s /secrets/wsgi-conf /etc/apache2/sites-available/wsgi.conf
+RUN ln -s apache/wsgi.conf /etc/apache2/sites-available/wsgi.conf
 RUN a2ensite wsgi
 
-COPY newrelic.ini /secrets/newrelic-ini
-RUN ln -s /secrets/newrelic-ini /var/www/python/matgen_prod/newrelic.ini
+RUN ln -s newrelic.ini /var/www/python/matgen_prod/newrelic.ini
 
-COPY materials_django/materials_django/wsgi.py /secrets/wsgi-py
-RUN rm materials_django/wsgi.py && \
-    ln -s /secrets/wsgi-py materials_django/wsgi.py && \
-    chown -R www-matgen /var/www/python
+RUN chown -R www-matgen /var/www/python
 
 ENV LD_LIBRARY_PATH=/opt/miniconda3/lib
 
