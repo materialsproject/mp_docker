@@ -4,6 +4,7 @@ services:
   web:
     build:
       context: .
+      dockerfile: Dockerfile.rancher2
       args:
         PRODUCTION: 1
         SSL_TERMINATION: 1
