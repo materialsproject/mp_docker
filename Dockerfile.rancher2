@@ -107,12 +107,10 @@ RUN sed --in-place 's/#ServerName www.example.com/ServerName materialsproject.or
 RUN sed --in-place 's/ErrorLog/#ErrorLog/g' /etc/apache2/sites-available/000-default.conf
 RUN sed --in-place 's/CustomLog/#CustomLog/g' /etc/apache2/sites-available/000-default.conf
 
-RUN mkdir -p /secrets/
-
-RUN ln -s apache/wsgi.conf /etc/apache2/sites-available/wsgi.conf
+COPY apache/wsgi.conf /etc/apache2/sites-available/wsgi.conf
 RUN a2ensite wsgi
 
-RUN ln -s newrelic.ini /var/www/python/matgen_prod/newrelic.ini
+COPY newrelic.ini /var/www/python/matgen_prod/newrelic.ini
 
 RUN chown -R www-matgen /var/www/python
 
